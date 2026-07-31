@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import styles from './PieceDetail.module.css';
 
 function getStoneHex(stone, colors) {
@@ -45,7 +46,13 @@ export default function PieceDetail({ piece, onClose, colors }) {
           }
         >
           {piece.url_foto ? (
-            <img src={piece.url_foto} alt={piece.nombre} className={styles.image} />
+            <Image
+              src={piece.url_foto}
+              alt={piece.nombre}
+              fill
+              sizes="480px"
+              className={styles.image}
+            />
           ) : (
             <>
               <div

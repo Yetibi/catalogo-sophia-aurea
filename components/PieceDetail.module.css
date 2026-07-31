@@ -38,6 +38,7 @@
   margin: 0 16px;
   border-radius: 12px;
   overflow: hidden;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;

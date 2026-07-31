@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import styles from './PieceCard.module.css';
 
 function getStoneHex(stone, colors) {
@@ -18,7 +19,13 @@ export default function PieceCard({ piece, onSelect, colors }) {
       {/* Image area */}
       <div className={styles.imageArea}>
         {piece.url_foto ? (
-          <img src={piece.url_foto} alt={piece.nombre} className={styles.image} loading="lazy" />
+          <Image
+            src={piece.url_foto}
+            alt={piece.nombre}
+            fill
+            sizes="(max-width: 600px) 50vw, 300px"
+            className={styles.image}
+          />
         ) : (
           <>
             <div
