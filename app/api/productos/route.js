@@ -27,24 +27,41 @@ async function getGraphClient() {
   return client;
 }
 
-// Fetch Excel file from OneDrive and parse products
+// Fetch Excel file from SharePoint and parse products
 async function getProductosFromExcel() {
   try {
     const client = await getGraphClient();
 
-    // Get files from OneDrive to find the Excel file
-    const response = await client.api('/me/drive/root/children').get();
+    // App-only auth can't use /me — resolve the SharePoint site and drive explicitly
+    const tenantHostname = process.env.AZURE_TENANT_ID.replace('.onmicrosoft.com', '.sharepoint.com');
+    const site = await client
+      .api(`/sites/${tenantHostname}:/sites/${process.env.SHAREPOINT_SITE_ID}`)
+      .get();
+
+    const drivesRes = await client.api(`/sites/${site.id}/drives`).get();
+    const targetDriveName = decodeURIComponent(process.env.SHAREPOINT_DRIVE_ID);
+    const drive =
+      drivesRes.value.find((d) => d.name === targetDriveName) || drivesRes.value[0];
+
+    if (!drive) {
+      throw new Error(
+        `Drive "${targetDriveName}" not found. Available drives: ${drivesRes.value.map((d) => d.name).join(', ')}`
+      );
+    }
+
+    // Get files from the drive root to find the Excel file
+    const response = await client.api(`/drives/${drive.id}/root/children`).get();
 
     const excelFile = response.value.find(
       (file) => file.name === process.env.EXCEL_FILE_NAME
     );
 
     if (!excelFile) {
-      throw new Error(`Excel file "${process.env.EXCEL_FILE_NAME}" not found in OneDrive`);
+      throw new Error(`Excel file "${process.env.EXCEL_FILE_NAME}" not found in SharePoint drive`);
     }
 
     // Get the file content as buffer
-    const fileContent = await client.api(`/me/drive/items/${excelFile.id}/content`).get();
+    const fileContent = await client.api(`/drives/${drive.id}/items/${excelFile.id}/content`).get();
 
     // Parse Excel
     const workbook = XLSX.read(fileContent, { type: 'buffer' });
