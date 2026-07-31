@@ -78,7 +78,7 @@ async function getProductosFromExcel() {
     const data = XLSX.utils.sheet_to_json(sheet);
 
     // Look up real photo download URLs from the OneDrive photos folder
-    const photosFolder = process.env.PHOTOS_FOLDER;
+    const photosFolder = `/${(process.env.PHOTOS_FOLDER || '').replace(/^\/+/, '')}`;
     let photosByName = {};
     try {
       const photosResponse = await client
