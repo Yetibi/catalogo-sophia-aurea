@@ -1,6 +1,6 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 import { ClientSecretCredential } from '@azure/identity';
-import XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
 
 // Get access token from Azure AD
 async function getAccessToken() {
@@ -27,43 +27,47 @@ async function getGraphClient() {
   return client;
 }
 
-// Fetch Excel file from SharePoint and parse products
+// Graph's fetch-based client returns binary content as a ReadableStream, not a Buffer
+async function streamToBuffer(stream) {
+  const reader = stream.getReader();
+  const chunks = [];
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+  }
+  return Buffer.concat(chunks.map((chunk) => Buffer.from(chunk)));
+}
+
+// Fetch Excel file from OneDrive and parse products
 async function getProductosFromExcel() {
   try {
     const client = await getGraphClient();
 
-    // App-only auth can't use /me — resolve the SharePoint site and drive explicitly
-    const tenantHostname = process.env.AZURE_TENANT_ID.replace('.onmicrosoft.com', '.sharepoint.com');
-    const site = await client
-      .api(`/sites/${tenantHostname}:/sites/${process.env.SHAREPOINT_SITE_ID}`)
+    // App-only auth can't use /me — access the user's OneDrive explicitly by UPN
+    const userEmail = process.env.ONEDRIVE_USER_EMAIL;
+
+    // Navigate to the specific folder in OneDrive
+    const folderPath = "/06-Financiero/movimientos financieros/datos/archivos gestión";
+    const folderResponse = await client
+      .api(`/users/${userEmail}/drive/root:${folderPath}:/children`)
       .get();
 
-    const drivesRes = await client.api(`/sites/${site.id}/drives`).get();
-    const targetDriveName = decodeURIComponent(process.env.SHAREPOINT_DRIVE_ID);
-    const drive =
-      drivesRes.value.find((d) => d.name === targetDriveName) || drivesRes.value[0];
-
-    if (!drive) {
-      throw new Error(
-        `Drive "${targetDriveName}" not found. Available drives: ${drivesRes.value.map((d) => d.name).join(', ')}`
-      );
-    }
-
-    // Get files from the drive root to find the Excel file
-    const response = await client.api(`/drives/${drive.id}/root/children`).get();
-
-    const excelFile = response.value.find(
+    const excelFile = folderResponse.value.find(
       (file) => file.name === process.env.EXCEL_FILE_NAME
     );
 
     if (!excelFile) {
-      throw new Error(`Excel file "${process.env.EXCEL_FILE_NAME}" not found in SharePoint drive`);
+      throw new Error(`Excel file "${process.env.EXCEL_FILE_NAME}" not found at ${folderPath}`);
     }
 
-    // Get the file content as buffer
-    const fileContent = await client.api(`/drives/${drive.id}/items/${excelFile.id}/content`).get();
+    // Get the file content and convert to a buffer xlsx can read
+    const stream = await client
+      .api(`/users/${userEmail}/drive/items/${excelFile.id}/content`)
+      .get();
+    const fileContent = await streamToBuffer(stream);
 
-    // Parse Excel
+    // Parse Excel - read from the "TablaProductos" sheet
     const workbook = XLSX.read(fileContent, { type: 'buffer' });
     const sheet = workbook.Sheets['TablaProductos'];
 
