@@ -103,6 +103,7 @@ async function getProductosFromExcel() {
         piedra: row.piedra || '',
         color_piedra: row.color_piedra || '',
         material: row.material || '',
+        precio: row.Precio || '',
         tamano: row.tamano || '',
         dimensiones: row.dimensiones || '',
         peso_gramos: row.peso_gramos || '',

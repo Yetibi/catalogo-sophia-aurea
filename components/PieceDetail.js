@@ -6,8 +6,19 @@ function getStoneHex(stone, colors) {
   return colors.stone[stone] || '#A89B8C';
 }
 
+function formatPrecio(precio) {
+  const numero = Number(precio);
+  if (!precio || Number.isNaN(numero)) return '';
+  return numero.toLocaleString('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    maximumFractionDigits: 0,
+  });
+}
+
 export default function PieceDetail({ piece, onClose, colors }) {
   const hex = getStoneHex(piece.piedra, colors);
+  const precioFormateado = formatPrecio(piece.precio);
 
   const waLink = `https://wa.me/573000000000?text=${encodeURIComponent(
     `Hola, vi el catálogo de Sophia Auréa y me interesa "${piece.nombre}" (${piece.tipo_pieza} · ${piece.piedra}) ✨`
@@ -79,7 +90,10 @@ export default function PieceDetail({ piece, onClose, colors }) {
             <AttributeRow label="Color de piedra" value={piece.color_piedra} dot={hex} />
             <AttributeRow label="Tamaño" value={piece.tamano} />
             <AttributeRow label="Dimensiones" value={piece.dimensiones} />
-            <AttributeRow label="Material" value={piece.material} last={true} />
+            <AttributeRow label="Material" value={piece.material} />
+            {precioFormateado && (
+              <AttributeRow label="Precio" value={precioFormateado} last={true} />
+            )}
           </div>
 
           {/* Symbolizes */}
