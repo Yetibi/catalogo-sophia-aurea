@@ -1,0 +1,64 @@
+:root {
+  --bg: #F5EFE7;
+  --surface: #FEFCF9;
+  --surface-hover: #FBF6EE;
+  --gold: #B8963E;
+  --gold-light: #D4AF37;
+  --gold-subtle: rgba(184,150,62,0.08);
+  --gold-border: rgba(184,150,62,0.2);
+  --bronze: #8B7355;
+  --dark: #5A4A3A;
+  --muted: #A89B8C;
+  --border: #E8DFD3;
+  --white: #FEFCF9;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--bg);
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
