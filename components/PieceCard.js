@@ -17,17 +17,20 @@ export default function PieceCard({ piece, onSelect, colors }) {
     >
       {/* Image area */}
       <div className={styles.imageArea}>
-        <div
-          className={styles.stoneDot}
-          style={{
-            background: `radial-gradient(circle at 35% 35%, ${hex}88, ${hex})`,
-            boxShadow: `0 4px 16px ${hex}33, inset 0 2px 4px rgba(255,255,255,0.2)`,
-          }}
-        />
-        <span className={styles.placeholder}>Foto próximamente</span>
-
-        {!piece.url_foto && (
-          <div className={styles.badge}>Próximamente</div>
+        {piece.url_foto ? (
+          <img src={piece.url_foto} alt={piece.nombre} className={styles.image} />
+        ) : (
+          <>
+            <div
+              className={styles.stoneDot}
+              style={{
+                background: `radial-gradient(circle at 35% 35%, ${hex}88, ${hex})`,
+                boxShadow: `0 4px 16px ${hex}33, inset 0 2px 4px rgba(255,255,255,0.2)`,
+              }}
+            />
+            <span className={styles.placeholder}>Foto próximamente</span>
+            <div className={styles.badge}>Próximamente</div>
+          </>
         )}
 
         <div className={styles.pieceTypeBadge}>{piece.tipo_pieza}</div>

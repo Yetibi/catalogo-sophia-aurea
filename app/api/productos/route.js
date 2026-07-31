@@ -77,6 +77,20 @@ async function getProductosFromExcel() {
 
     const data = XLSX.utils.sheet_to_json(sheet);
 
+    // Look up real photo download URLs from the OneDrive photos folder
+    const photosFolder = process.env.PHOTOS_FOLDER;
+    let photosByName = {};
+    try {
+      const photosResponse = await client
+        .api(`/users/${userEmail}/drive/root:${photosFolder}:/children`)
+        .get();
+      photosByName = Object.fromEntries(
+        photosResponse.value.map((file) => [file.name, file['@microsoft.graph.downloadUrl']])
+      );
+    } catch (error) {
+      console.error('Error fetching photos folder:', error.message);
+    }
+
     // Map Excel rows to producto objects
     const productos = data
       .filter((row) => row.id_producto && row.cargar_catalogo === 'SI') // Only published
@@ -96,7 +110,7 @@ async function getProductosFromExcel() {
         simboliza: row.simboliza || '',
         mensaje: row.mensaje || '',
         ruta_foto: row.ruta_foto || '',
-        url_foto: row.url_foto || '',
+        url_foto: photosByName[row.url_foto] || '',
       }));
 
     return productos;

@@ -27,20 +27,28 @@ export default function PieceDetail({ piece, onClose, colors }) {
         {/* Image */}
         <div
           className={styles.imageArea}
-          style={{
-            background: `linear-gradient(145deg, var(--bg), var(--surface-hover))`,
-          }}
+          style={
+            piece.url_foto
+              ? undefined
+              : { background: `linear-gradient(145deg, var(--bg), var(--surface-hover))` }
+          }
         >
-          <div
-            style={{
-              width: 72,
-              height: 72,
-              borderRadius: '50%',
-              background: `radial-gradient(circle at 35% 35%, ${hex}88, ${hex})`,
-              boxShadow: `0 6px 24px ${hex}33, inset 0 2px 6px rgba(255,255,255,0.25)`,
-            }}
-          />
-          <span className={styles.placeholder}>Foto próximamente</span>
+          {piece.url_foto ? (
+            <img src={piece.url_foto} alt={piece.nombre} className={styles.image} />
+          ) : (
+            <>
+              <div
+                style={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: '50%',
+                  background: `radial-gradient(circle at 35% 35%, ${hex}88, ${hex})`,
+                  boxShadow: `0 6px 24px ${hex}33, inset 0 2px 6px rgba(255,255,255,0.25)`,
+                }}
+              />
+              <span className={styles.placeholder}>Foto próximamente</span>
+            </>
+          )}
         </div>
 
         {/* Content */}
