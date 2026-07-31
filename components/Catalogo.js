@@ -26,18 +26,21 @@ export default function CatalogoSophiaAurea({ productos }) {
     pieceType: "todas",
     stone: "todas",
     collection: "todas",
+    figure: "todas",
   });
   const [showFilters, setShowFilters] = useState(false);
 
   const pieceTypes = useMemo(() => getUnique(productos, "tipo_pieza"), [productos]);
   const stones = useMemo(() => getUnique(productos, "piedra"), [productos]);
   const collections = useMemo(() => getUnique(productos, "coleccion"), [productos]);
+  const figures = useMemo(() => getUnique(productos, "figura"), [productos]);
 
   const filtered = useMemo(() => {
     return productos.filter((p) => {
       if (filters.pieceType !== "todas" && p.tipo_pieza !== filters.pieceType) return false;
       if (filters.stone !== "todas" && p.piedra !== filters.stone) return false;
       if (filters.collection !== "todas" && p.coleccion !== filters.collection) return false;
+      if (filters.figure !== "todas" && p.figura !== filters.figure) return false;
       return true;
     });
   }, [productos, filters]);
@@ -49,7 +52,7 @@ export default function CatalogoSophiaAurea({ productos }) {
   };
 
   const clearFilters = () => {
-    setFilters({ pieceType: "todas", stone: "todas", collection: "todas" });
+    setFilters({ pieceType: "todas", stone: "todas", collection: "todas", figure: "todas" });
   };
 
   return (
@@ -121,6 +124,12 @@ export default function CatalogoSophiaAurea({ productos }) {
             value={filters.collection}
             onChange={(v) => updateFilter("collection", v)}
           />
+          <FilterRow
+            label="Figura"
+            options={figures}
+            value={filters.figure}
+            onChange={(v) => updateFilter("figure", v)}
+          />
         </div>
       )}
 
@@ -147,7 +156,7 @@ export default function CatalogoSophiaAurea({ productos }) {
       {/* Fixed WhatsApp bar */}
       <div className={styles.whatsappBar}>
         <a
-          href="https://wa.me/573000000000?text=Hola,%20vi%20el%20catálogo%20de%20Sophia%20Auréa%20y%20me%20interesa%20saber%20más%20sobre%20una%20pieza%20✨"
+          href="https://wa.me/573022066687?text=Hola,%20vi%20el%20catálogo%20de%20Sophia%20Auréa%20y%20me%20interesa%20saber%20más%20sobre%20una%20pieza%20✨"
           target="_blank"
           rel="noopener noreferrer"
           className={styles.whatsappBtn}

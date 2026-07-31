@@ -20,7 +20,7 @@ export default function PieceDetail({ piece, onClose, colors }) {
   const hex = getStoneHex(piece.piedra, colors);
   const precioFormateado = formatPrecio(piece.precio);
 
-  const waLink = `https://wa.me/573000000000?text=${encodeURIComponent(
+  const waLink = `https://wa.me/573022066687?text=${encodeURIComponent(
     `Hola, vi el catálogo de Sophia Auréa y me interesa "${piece.nombre}" (${piece.tipo_pieza} · ${piece.piedra}) ✨`
   )}`;
 
@@ -89,7 +89,7 @@ export default function PieceDetail({ piece, onClose, colors }) {
             <AttributeRow label="Piedra" value={piece.piedra} dot={hex} />
             <AttributeRow label="Color de piedra" value={piece.color_piedra} dot={hex} />
             <AttributeRow label="Tamaño" value={piece.tamano} />
-            <AttributeRow label="Dimensiones" value={piece.dimensiones} />
+            {/* Dimensiones oculta temporalmente a pedido del usuario */}
             <AttributeRow label="Material" value={piece.material} />
             {precioFormateado && (
               <AttributeRow label="Precio" value={precioFormateado} last={true} />
