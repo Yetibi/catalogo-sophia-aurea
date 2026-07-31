@@ -111,7 +111,7 @@ async function getProductosFromExcel() {
         simboliza: row.simboliza || '',
         mensaje: row.mensaje || '',
         ruta_foto: row.ruta_foto || '',
-        url_foto: photosByName[row.url_foto] || '',
+        url_foto: photosByName[`${row.url_foto}.jpg`] || '',
       }));
 
     return productos;

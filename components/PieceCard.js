@@ -18,7 +18,7 @@ export default function PieceCard({ piece, onSelect, colors }) {
       {/* Image area */}
       <div className={styles.imageArea}>
         {piece.url_foto ? (
-          <img src={piece.url_foto} alt={piece.nombre} className={styles.image} />
+          <img src={piece.url_foto} alt={piece.nombre} className={styles.image} loading="lazy" />
         ) : (
           <>
             <div
