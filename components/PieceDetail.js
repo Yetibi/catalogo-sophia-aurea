@@ -7,6 +7,10 @@ function getStoneHex(stone, colors) {
   return colors.stone[stone] || '#A89B8C';
 }
 
+function getColorNameHex(colorName, colors) {
+  return colors.colorName?.[colorName] || '#A89B8C';
+}
+
 function formatPrecio(precio) {
   const numero = Number(precio);
   if (!precio || Number.isNaN(numero)) return '';
@@ -15,6 +19,7 @@ function formatPrecio(precio) {
 
 export default function PieceDetail({ piece, onClose, colors }) {
   const hex = getStoneHex(piece.piedra, colors);
+  const colorHex = getColorNameHex(piece.color_piedra, colors);
   const precioFormateado = formatPrecio(piece.precio);
 
   const waLink = `https://wa.me/573022066687?text=${encodeURIComponent(
@@ -90,7 +95,7 @@ export default function PieceDetail({ piece, onClose, colors }) {
             <AttributeRow label="Figura" value={piece.figura} />
             <AttributeRow label="Tipo de artículo" value={piece.tipo_pieza} />
             <AttributeRow label="Piedra" value={piece.piedra} dot={hex} />
-            <AttributeRow label="Color de piedra" value={piece.color_piedra} dot={hex} />
+            <AttributeRow label="Color de piedra" value={piece.color_piedra} dot={colorHex} />
             <AttributeRow label="Tamaño" value={piece.tamano} />
             {/* Dimensiones oculta temporalmente a pedido del usuario */}
             <AttributeRow label="Material" value={piece.material} last={!precioFormateado} />

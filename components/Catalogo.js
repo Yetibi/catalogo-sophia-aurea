@@ -17,6 +17,15 @@ const COLORS = {
     "Zafiro Rosa": "#C77D8A",
     "Moissanita": "#C9C5BF",
   },
+  colorName: {
+    "Azul": "#2E5090",
+    "Rojo": "#9B2335",
+    "Verde": "#2D6A4F",
+    "Blanco": "#C9C5BF",
+    "Morado": "#6B4C8A",
+    "Rosado": "#C77D8A",
+    "Naranja": "#C9772E",
+  },
 };
 
 function getUnique(arr, key) {

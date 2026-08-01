@@ -77,16 +77,32 @@ async function getProductosFromExcel() {
 
     const data = XLSX.utils.sheet_to_json(sheet);
 
-    // Look up real photo download URLs from the OneDrive photos folder
+    // Look up real photo URLs from the OneDrive photos folder.
+    // Use Microsoft's pre-generated thumbnail for the grid (KBs) instead of the
+    // full-resolution camera file (several MB) — avoids the server having to
+    // download and re-process a huge image just to show a small card preview.
     const photosFolder = `/${(process.env.PHOTOS_FOLDER || '').replace(/^\/+/, '')}`;
     let photosByName = {};
     try {
       const photosResponse = await client
         .api(`/users/${userEmail}/drive/root:${photosFolder}:/children`)
         .get();
-      photosByName = Object.fromEntries(
-        photosResponse.value.map((file) => [file.name, file['@microsoft.graph.downloadUrl']])
+
+      const withThumbnails = await Promise.all(
+        photosResponse.value.map(async (file) => {
+          try {
+            const thumbs = await client
+              .api(`/users/${userEmail}/drive/items/${file.id}/thumbnails`)
+              .get();
+            const large = thumbs.value?.[0]?.large?.url;
+            return [file.name, { full: file['@microsoft.graph.downloadUrl'], thumb: large || file['@microsoft.graph.downloadUrl'] }];
+          } catch (error) {
+            return [file.name, { full: file['@microsoft.graph.downloadUrl'], thumb: file['@microsoft.graph.downloadUrl'] }];
+          }
+        })
       );
+
+      photosByName = Object.fromEntries(withThumbnails);
     } catch (error) {
       console.error('Error fetching photos folder:', error.message);
     }
@@ -111,7 +127,8 @@ async function getProductosFromExcel() {
         simboliza: row.simboliza || '',
         mensaje: row.mensaje || '',
         ruta_foto: row.ruta_foto || '',
-        url_foto: photosByName[`${row.url_foto}.jpg`] || '',
+        url_foto: photosByName[`${row.url_foto}.jpg`]?.full || '',
+        url_foto_thumb: photosByName[`${row.url_foto}.jpg`]?.thumb || '',
       }));
 
     return productos;

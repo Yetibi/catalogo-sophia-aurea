@@ -9,6 +9,8 @@ const nextConfig = {
         hostname: '*.sharepoint.com',
       },
     ],
+    imageSizes: [256, 384],
+    deviceSizes: [384, 640],
   },
 };
 
