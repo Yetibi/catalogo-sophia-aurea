@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import PieceCard from './PieceCard';
 import PieceDetail from './PieceDetail';
 import styles from './Catalogo.module.css';
@@ -60,11 +61,14 @@ export default function CatalogoSophiaAurea({ productos }) {
     <div className={styles.container}>
       {/* Header */}
       <header className={styles.header}>
-        <div className={styles.logo}>
-          <span className={styles.logoInitial}>A</span>
-        </div>
-        <h1 className={styles.title}>Sophia Auréa</h1>
-        <p className={styles.subtitle}>— Joyería con Alma —</p>
+        <Image
+          src="/lockup-completo-transparente.png"
+          alt="Sophia Auréa — Joyería con Alma"
+          width={220}
+          height={254}
+          className={styles.logo}
+          priority
+        />
       </header>
 
       {/* Intro */}
