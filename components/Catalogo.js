@@ -71,10 +71,10 @@ export default function CatalogoSophiaAurea({ productos }) {
       {/* Header */}
       <header className={styles.header}>
         <Image
-          src="/lockup-completo-transparente.png"
+          src="/lockup-completo-fondo-marfil.png"
           alt="Sophia Auréa — Joyería con Alma"
           width={220}
-          height={254}
+          height={220}
           className={styles.logo}
           priority
         />
