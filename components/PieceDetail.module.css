@@ -150,6 +150,16 @@
   gap: 6px;
 }
 
+.attributeValueEmphasis {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  color: var(--dark);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .symbolizes {
   margin-bottom: 14px;
 }

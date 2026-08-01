@@ -8,11 +8,13 @@ import styles from './Catalogo.module.css';
 const COLORS = {
   stone: {
     "Zafiro Azul": "#2E5090",
+    "Zafiro": "#2E5090",
     "Rubí": "#9B2335",
     "Esmeralda": "#2D6A4F",
     "Diamante": "#C9C5BF",
     "Amatista": "#6B4C8A",
     "Zafiro Rosa": "#C77D8A",
+    "Moissanita": "#C9C5BF",
   },
 };
 
@@ -28,7 +30,6 @@ export default function CatalogoSophiaAurea({ productos }) {
     collection: "todas",
     figure: "todas",
   });
-  const [showFilters, setShowFilters] = useState(false);
 
   const pieceTypes = useMemo(() => getUnique(productos, "tipo_pieza"), [productos]);
   const stones = useMemo(() => getUnique(productos, "piedra"), [productos]);
@@ -59,83 +60,68 @@ export default function CatalogoSophiaAurea({ productos }) {
     <div className={styles.container}>
       {/* Header */}
       <header className={styles.header}>
+        <div className={styles.logo}>
+          <span className={styles.logoInitial}>A</span>
+        </div>
         <h1 className={styles.title}>Sophia Auréa</h1>
         <p className={styles.subtitle}>— Joyería con Alma —</p>
       </header>
 
       {/* Intro */}
       <div className={styles.intro}>
+        <h2 className={styles.introTitle}>Nuestros artículos disponibles</h2>
         <p>
-          Cada joya guarda una historia.<br />
-          Cada piedra refleja una intención.<br />
-          Cada amuleto acompaña un camino.
+          Explora nuestra colección de joyas en oro 18K y piedras naturales.
+          Cada artículo está hecho con intención y guarda un significado único.
+        </p>
+        <p className={styles.introInstruction}>
+          Filtra por tipo de artículo, piedra o colección para encontrar el que
+          resuena contigo. Cuando encuentres el tuyo, escríbenos por WhatsApp.
         </p>
         <div className={styles.divider}>
           <span></span>
-          <span className={styles.dividerText}>Oro 18K · Piedras Naturales · Hecho con intención</span>
+          <span className={styles.dividerText}>Oro 18K · Piedras naturales · Hecho con intención</span>
           <span></span>
         </div>
       </div>
 
-      {/* Filter button */}
-      <div className={styles.filterToggle}>
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className={styles.filterBtn}
-          style={{
-            borderColor: activeFilterCount > 0 ? "var(--gold)" : "var(--border)",
-            background: activeFilterCount > 0 ? "var(--gold-subtle)" : "transparent",
-            color: activeFilterCount > 0 ? "var(--gold)" : "var(--muted)",
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-          </svg>
-          Filtrar
-          {activeFilterCount > 0 && (
-            <span className={styles.badge}>{activeFilterCount}</span>
-          )}
-        </button>
+      {/* Filter panel - always visible */}
+      <div className={styles.filterPanel}>
+        <FilterRow
+          label="Tipo de artículo"
+          options={pieceTypes}
+          value={filters.pieceType}
+          onChange={(v) => updateFilter("pieceType", v)}
+        />
+        <FilterRow
+          label="Piedra"
+          options={stones}
+          value={filters.stone}
+          onChange={(v) => updateFilter("stone", v)}
+          colors={COLORS.stone}
+        />
+        <FilterRow
+          label="Colección"
+          options={collections}
+          value={filters.collection}
+          onChange={(v) => updateFilter("collection", v)}
+        />
+        <FilterRow
+          label="Figura"
+          options={figures}
+          value={filters.figure}
+          onChange={(v) => updateFilter("figure", v)}
+        />
         {activeFilterCount > 0 && (
           <button onClick={clearFilters} className={styles.clearBtn}>
-            Limpiar
+            Limpiar filtros
           </button>
         )}
       </div>
 
-      {/* Filter panel */}
-      {showFilters && (
-        <div className={styles.filterPanel}>
-          <FilterRow
-            label="Tipo de pieza"
-            options={pieceTypes}
-            value={filters.pieceType}
-            onChange={(v) => updateFilter("pieceType", v)}
-          />
-          <FilterRow
-            label="Piedra"
-            options={stones}
-            value={filters.stone}
-            onChange={(v) => updateFilter("stone", v)}
-          />
-          <FilterRow
-            label="Colección"
-            options={collections}
-            value={filters.collection}
-            onChange={(v) => updateFilter("collection", v)}
-          />
-          <FilterRow
-            label="Figura"
-            options={figures}
-            value={filters.figure}
-            onChange={(v) => updateFilter("figure", v)}
-          />
-        </div>
-      )}
-
       {/* Results count */}
       <div className={styles.resultCount}>
-        {filtered.length} {filtered.length === 1 ? "pieza" : "piezas"} disponibles
+        {filtered.length} {filtered.length === 1 ? "artículo" : "artículos"} disponibles
       </div>
 
       {/* Grid */}
@@ -145,9 +131,9 @@ export default function CatalogoSophiaAurea({ productos }) {
         ))}
         {filtered.length === 0 && (
           <div className={styles.noResults}>
-            No hay piezas que coincidan con los filtros seleccionados.<br />
+            No hay artículos que coincidan con los filtros seleccionados.<br />
             <button onClick={clearFilters} className={styles.noResultsLink}>
-              Ver todas las piezas
+              Ver todos los artículos
             </button>
           </div>
         )}
@@ -156,7 +142,7 @@ export default function CatalogoSophiaAurea({ productos }) {
       {/* Fixed WhatsApp bar */}
       <div className={styles.whatsappBar}>
         <a
-          href="https://wa.me/573022066687?text=Hola,%20vi%20el%20catálogo%20de%20Sophia%20Auréa%20y%20me%20interesa%20saber%20más%20sobre%20una%20pieza%20✨"
+          href="https://wa.me/573022066687?text=Hola,%20vi%20el%20catálogo%20de%20Sophia%20Auréa%20y%20me%20interesa%20saber%20más%20sobre%20un%20artículo%20✨"
           target="_blank"
           rel="noopener noreferrer"
           className={styles.whatsappBtn}
@@ -186,21 +172,27 @@ export default function CatalogoSophiaAurea({ productos }) {
   );
 }
 
-function FilterRow({ label, options, value, onChange }) {
+function FilterRow({ label, options, value, onChange, colors }) {
   return (
     <div className={styles.filterRow}>
       <div className={styles.filterLabel}>{label}</div>
       <div className={styles.filterChips}>
         <FilterChip label="Todas" active={value === "todas"} onClick={() => onChange("todas")} />
         {options.map((o) => (
-          <FilterChip key={o} label={o} active={value === o} onClick={() => onChange(o)} />
+          <FilterChip
+            key={o}
+            label={o}
+            active={value === o}
+            onClick={() => onChange(o)}
+            dot={colors ? colors[o] : undefined}
+          />
         ))}
       </div>
     </div>
   );
 }
 
-function FilterChip({ label, active, onClick }) {
+function FilterChip({ label, active, onClick, dot }) {
   return (
     <button
       onClick={onClick}
@@ -212,6 +204,12 @@ function FilterChip({ label, active, onClick }) {
         fontWeight: active ? 500 : 400,
       }}
     >
+      {dot && (
+        <span
+          className={styles.filterChipDot}
+          style={{ background: dot }}
+        />
+      )}
       {label}
     </button>
   );

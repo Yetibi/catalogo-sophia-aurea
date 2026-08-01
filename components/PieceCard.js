@@ -7,8 +7,15 @@ function getStoneHex(stone, colors) {
   return colors.stone[stone] || '#A89B8C';
 }
 
+function formatPrecio(precio) {
+  const numero = Number(precio);
+  if (!precio || Number.isNaN(numero)) return '';
+  return `$ ${numero.toLocaleString('es-CO')}`;
+}
+
 export default function PieceCard({ piece, onSelect, colors }) {
   const hex = getStoneHex(piece.piedra, colors);
+  const precioFormateado = formatPrecio(piece.precio);
 
   return (
     <button
@@ -58,6 +65,12 @@ export default function PieceCard({ piece, onSelect, colors }) {
         <h3 className={styles.name}>{piece.nombre}</h3>
 
         <p className={styles.phrase}>"{piece.frase_ancla}"</p>
+
+        {precioFormateado && (
+          <div className={styles.priceRow}>
+            <span className={styles.price}>{precioFormateado}</span>
+          </div>
+        )}
       </div>
     </button>
   );

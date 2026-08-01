@@ -5,16 +5,20 @@
   flex-direction: column;
   background: var(--surface);
   border-radius: 12px;
-  border: 1px solid var(--border);
   overflow: hidden;
   transition: all 0.25s ease;
-  box-shadow: 0 1px 3px rgba(90, 74, 58, 0.06);
+  box-shadow:
+    0 2px 4px rgba(74, 58, 34, 0.06),
+    0 8px 24px rgba(74, 58, 34, 0.10),
+    0 16px 40px rgba(74, 58, 34, 0.06);
 }
 
 .card:hover {
-  box-shadow: 0 4px 16px rgba(90, 74, 58, 0.1);
-  border-color: var(--gold-border);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow:
+    0 4px 8px rgba(74, 58, 34, 0.08),
+    0 12px 32px rgba(74, 58, 34, 0.14),
+    0 24px 56px rgba(74, 58, 34, 0.10);
 }
 
 .imageArea {
@@ -121,4 +125,17 @@
   font-style: italic;
   margin: 0;
   line-height: 1.4;
+}
+
+.priceRow {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark);
 }
