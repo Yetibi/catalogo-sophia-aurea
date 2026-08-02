@@ -52,6 +52,7 @@ export default function PieceDetail({ piece, onClose, colors }) {
               alt={piece.nombre}
               fill
               sizes="480px"
+              unoptimized
               className={styles.image}
             />
           ) : (

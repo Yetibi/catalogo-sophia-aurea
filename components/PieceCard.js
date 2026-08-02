@@ -27,7 +27,7 @@ export default function PieceCard({ piece, onSelect, colors }) {
       <div className={styles.imageArea}>
         {piece.url_foto ? (
           <Image
-            src={piece.url_foto_thumb || piece.url_foto}
+            src={piece.url_foto}
             alt={piece.nombre}
             fill
             sizes="(max-width: 600px) 50vw, 300px"

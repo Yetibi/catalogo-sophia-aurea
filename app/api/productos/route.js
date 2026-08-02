@@ -77,32 +77,21 @@ async function getProductosFromExcel() {
 
     const data = XLSX.utils.sheet_to_json(sheet);
 
-    // Look up real photo URLs from the OneDrive photos folder.
-    // Use Microsoft's pre-generated thumbnail for the grid (KBs) instead of the
-    // full-resolution camera file (several MB) — avoids the server having to
-    // download and re-process a huge image just to show a small card preview.
+    // Look up photo item IDs from the OneDrive photos folder. We don't hand
+    // out Microsoft's temporary download/thumbnail URLs to the browser —
+    // those embed a tempauth token that expires in ~1 day and then 503s.
+    // Instead we return our own stable proxy URL (/api/imagen/{itemId}),
+    // which fetches a fresh Graph token server-side on every request.
     const photosFolder = `/${(process.env.PHOTOS_FOLDER || '').replace(/^\/+/, '')}`;
-    let photosByName = {};
+    let photoIdsByName = {};
     try {
       const photosResponse = await client
         .api(`/users/${userEmail}/drive/root:${photosFolder}:/children`)
         .get();
 
-      const withThumbnails = await Promise.all(
-        photosResponse.value.map(async (file) => {
-          try {
-            const thumbs = await client
-              .api(`/users/${userEmail}/drive/items/${file.id}/thumbnails`)
-              .get();
-            const large = thumbs.value?.[0]?.large?.url;
-            return [file.name, { full: file['@microsoft.graph.downloadUrl'], thumb: large || file['@microsoft.graph.downloadUrl'] }];
-          } catch (error) {
-            return [file.name, { full: file['@microsoft.graph.downloadUrl'], thumb: file['@microsoft.graph.downloadUrl'] }];
-          }
-        })
+      photoIdsByName = Object.fromEntries(
+        photosResponse.value.map((file) => [file.name, file.id])
       );
-
-      photosByName = Object.fromEntries(withThumbnails);
     } catch (error) {
       console.error('Error fetching photos folder:', error.message);
     }
@@ -127,8 +116,9 @@ async function getProductosFromExcel() {
         simboliza: row.simboliza || '',
         mensaje: row.mensaje || '',
         ruta_foto: row.ruta_foto || '',
-        url_foto: photosByName[`${row.url_foto}.jpg`]?.full || '',
-        url_foto_thumb: photosByName[`${row.url_foto}.jpg`]?.thumb || '',
+        url_foto: photoIdsByName[`${row.url_foto}.jpg`]
+          ? `/api/imagen/${photoIdsByName[`${row.url_foto}.jpg`]}`
+          : '',
       }));
 
     return productos;
