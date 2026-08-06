@@ -2,6 +2,10 @@ import { Client } from '@microsoft/microsoft-graph-client';
 import { ClientSecretCredential } from '@azure/identity';
 import * as XLSX from 'xlsx';
 
+// Without this, Next prerenders this GET route at build time and Vercel serves
+// the frozen response — Excel edits would never show up until the next deploy.
+export const dynamic = 'force-dynamic';
+
 // Get access token from Azure AD
 async function getAccessToken() {
   const credential = new ClientSecretCredential(
@@ -25,6 +29,18 @@ async function getGraphClient() {
   });
 
   return client;
+}
+
+// Excel cells and OneDrive filenames rarely agree exactly: users type the name
+// with/without extension (.jpg vs .jpeg), stray double spaces, or different
+// casing/accent encodings. Match on a normalized key instead of the raw name.
+function photoKey(name) {
+  return String(name || '')
+    .normalize('NFC')
+    .replace(/\.(jpe?g|png|webp|heic)$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
 }
 
 // Graph's fetch-based client returns binary content as a ReadableStream, not a Buffer
@@ -77,23 +93,31 @@ async function getProductosFromExcel() {
 
     const data = XLSX.utils.sheet_to_json(sheet);
 
-    // Look up photo item IDs from the OneDrive photos folder. We don't hand
+    // Look up photo item IDs from the OneDrive photos folders. We don't hand
     // out Microsoft's temporary download/thumbnail URLs to the browser —
     // those embed a tempauth token that expires in ~1 day and then 503s.
     // Instead we return our own stable proxy URL (/api/imagen/{itemId}),
     // which fetches a fresh Graph token server-side on every request.
-    const photosFolder = `/${(process.env.PHOTOS_FOLDER || '').replace(/^\/+/, '')}`;
-    let photoIdsByName = {};
-    try {
-      const photosResponse = await client
-        .api(`/users/${userEmail}/drive/root:${photosFolder}:/children`)
-        .get();
+    // PHOTOS_FOLDER accepts one or more folders separated by commas.
+    const photoFolders = (process.env.PHOTOS_FOLDER || '')
+      .split(',')
+      .map((folder) => `/${folder.trim().replace(/^\/+/, '')}`)
+      .filter((folder) => folder !== '/');
 
-      photoIdsByName = Object.fromEntries(
-        photosResponse.value.map((file) => [file.name, file.id])
-      );
-    } catch (error) {
-      console.error('Error fetching photos folder:', error.message);
+    const photoIdsByKey = {};
+    for (const folder of photoFolders) {
+      try {
+        const photosResponse = await client
+          .api(`/users/${userEmail}/drive/root:${folder}:/children`)
+          .top(500)
+          .get();
+
+        for (const file of photosResponse.value) {
+          photoIdsByKey[photoKey(file.name)] = file.id;
+        }
+      } catch (error) {
+        console.error(`Error fetching photos folder ${folder}:`, error.message);
+      }
     }
 
     // Map Excel rows to producto objects
@@ -116,8 +140,8 @@ async function getProductosFromExcel() {
         simboliza: row.simboliza || '',
         mensaje: row.mensaje || '',
         ruta_foto: row.ruta_foto || '',
-        url_foto: photoIdsByName[`${row.url_foto}.jpg`]
-          ? `/api/imagen/${photoIdsByName[`${row.url_foto}.jpg`]}`
+        url_foto: photoIdsByKey[photoKey(row.url_foto)]
+          ? `/api/imagen/${photoIdsByKey[photoKey(row.url_foto)]}`
           : '',
       }));
 
