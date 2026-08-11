@@ -63,8 +63,12 @@ async function getProductosFromExcel() {
     // App-only auth can't use /me — access the user's OneDrive explicitly by UPN
     const userEmail = process.env.ONEDRIVE_USER_EMAIL;
 
-    // Navigate to the specific folder in OneDrive
-    const folderPath = "/06-Financiero/movimientos financieros/datos/archivos gestión";
+    // Navigate to the specific folder in OneDrive. The whole tree was
+    // reorganized under /SOI in Aug 2026; EXCEL_FOLDER_PATH overrides
+    // without a code change if it moves again.
+    const folderPath =
+      process.env.EXCEL_FOLDER_PATH ||
+      '/SOI/06-Financiero/movimientos financieros/datos/archivos gestión';
     const folderResponse = await client
       .api(`/users/${userEmail}/drive/root:${folderPath}:/children`)
       .get();
@@ -106,17 +110,28 @@ async function getProductosFromExcel() {
 
     const photoIdsByKey = {};
     for (const folder of photoFolders) {
-      try {
-        const photosResponse = await client
-          .api(`/users/${userEmail}/drive/root:${folder}:/children`)
-          .top(500)
-          .get();
+      // If a configured folder no longer exists, retry under /SOI — the
+      // OneDrive tree moved there and env values may lag behind.
+      const candidates = folder.startsWith('/SOI/') ? [folder] : [folder, `/SOI${folder}`];
+      let found = false;
+      for (const candidate of candidates) {
+        try {
+          const photosResponse = await client
+            .api(`/users/${userEmail}/drive/root:${candidate}:/children`)
+            .top(500)
+            .get();
 
-        for (const file of photosResponse.value) {
-          photoIdsByKey[photoKey(file.name)] = file.id;
+          for (const file of photosResponse.value) {
+            photoIdsByKey[photoKey(file.name)] = file.id;
+          }
+          found = true;
+          break;
+        } catch (error) {
+          // try the next candidate path
         }
-      } catch (error) {
-        console.error(`Error fetching photos folder ${folder}:`, error.message);
+      }
+      if (!found) {
+        console.error(`Photos folder not found (tried ${candidates.join(', ')})`);
       }
     }
 
