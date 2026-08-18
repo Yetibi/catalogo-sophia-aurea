@@ -140,7 +140,9 @@ async function getProductosFromExcel() {
       .filter((row) => row.id_producto && row.cargar_catalogo === 'SI') // Only published
       .map((row) => ({
         id_producto: row.id_producto,
-        nombre: row.nombre || '',
+        // La columna del Excel se renombró de "nombre" a "producto" (ago 2026)
+        nombre: row.producto || row.nombre || '',
+        descripcion: row.descripcion || '',
         coleccion: row.coleccion || '',
         figura: row.figura || '',
         tipo_pieza: row.tipo_pieza || '',

@@ -89,7 +89,7 @@ export default function PieceDetail({ piece, onClose, colors }) {
             {piece.figura} · {piece.material}
           </p>
 
-          <p className={styles.phrase}>"{piece.frase_ancla}"</p>
+          <p className={styles.phrase}>{piece.descripcion || `"${piece.frase_ancla}"`}</p>
 
           {/* Attributes */}
           <div className={styles.attributes}>
