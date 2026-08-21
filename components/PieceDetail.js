@@ -89,7 +89,11 @@ export default function PieceDetail({ piece, onClose, colors }) {
             {piece.figura} · {piece.material}
           </p>
 
-          <p className={styles.phrase}>{piece.descripcion || `"${piece.frase_ancla}"`}</p>
+          {(piece.descripcion || piece.frase_ancla) && (
+            <p className={styles.phrase}>
+              {piece.descripcion || `"${piece.frase_ancla}"`}
+            </p>
+          )}
 
           {/* Attributes */}
           <div className={styles.attributes}>
@@ -105,16 +109,20 @@ export default function PieceDetail({ piece, onClose, colors }) {
             )}
           </div>
 
-          {/* Symbolizes */}
-          <div className={styles.symbolizes}>
-            <h4 className={styles.symbolizeLabel}>Simboliza</h4>
-            <p className={styles.symbolizeText}>{piece.simboliza}</p>
-          </div>
+          {/* Symbolizes — hidden when the Excel row has no value */}
+          {piece.simboliza && (
+            <div className={styles.symbolizes}>
+              <h4 className={styles.symbolizeLabel}>Simboliza</h4>
+              <p className={styles.symbolizeText}>{piece.simboliza}</p>
+            </div>
+          )}
 
-          {/* Message */}
-          <div className={styles.message}>
-            <p>{piece.mensaje}</p>
-          </div>
+          {/* Message — hidden when the Excel row has no value */}
+          {piece.mensaje && (
+            <div className={styles.message}>
+              <p>{piece.mensaje}</p>
+            </div>
+          )}
 
           {/* CTA */}
           {piece.url_foto ? (

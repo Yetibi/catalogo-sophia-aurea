@@ -65,7 +65,11 @@ export default function PieceCard({ piece, onSelect, colors }) {
 
         <h3 className={styles.name}>{piece.nombre}</h3>
 
-        <p className={styles.phrase}>"{piece.frase_ancla}"</p>
+        {(piece.descripcion || piece.frase_ancla) && (
+          <p className={styles.phrase}>
+            {piece.descripcion || `"${piece.frase_ancla}"`}
+          </p>
+        )}
 
         {precioFormateado && (
           <div className={styles.priceRow}>
