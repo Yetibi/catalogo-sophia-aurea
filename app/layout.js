@@ -2,9 +2,23 @@ import './globals.css';
 import Script from 'next/script';
 
 export const metadata = {
-  title: 'Sophia Auréa — Joyería con Alma',
-  description: 'Cada joya guarda una historia. Cada piedra refleja una intención. Cada amuleto acompaña un camino.',
+  metadataBase: new URL('https://sophiaaurea.co'),
+  title: 'Sophia Auréa — Joyería con Alma en Oro 18K y Piedras Naturales',
+  description:
+    'Joyería con alma hecha en Medellín: oro 18K y piedras naturales. Cada joya guarda una historia. Cada piedra refleja una intención. Cada amuleto acompaña un camino.',
   viewport: 'width=device-width, initial-scale=1',
+  openGraph: {
+    title: 'Sophia Auréa — Joyería con Alma',
+    description:
+      'Joyas en oro 18K y piedras naturales. Cada pieza guarda una historia, una luz, un alma.',
+    siteName: 'Sophia Auréa',
+    locale: 'es_CO',
+    type: 'website',
+    images: ['/lockup-completo-fondo-marfil.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
 };
 
 export default function RootLayout({ children }) {
