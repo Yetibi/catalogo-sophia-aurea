@@ -19,6 +19,12 @@ const nextConfig = {
         protocol: 'https',
         hostname: '*.sharepoint.com',
       },
+      {
+        // El logo se pide al subdominio propio (ver PREFIJO_ASSETS en
+        // components/Catalogo.js): sin autorizarlo, next/image lo rechaza.
+        protocol: 'https',
+        hostname: 'catalogo.sophiaaurea.co',
+      },
     ],
     imageSizes: [256, 384],
     deviceSizes: [384, 640],

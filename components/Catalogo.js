@@ -32,6 +32,10 @@ function getUnique(arr, key) {
   return [...new Set(arr.map((i) => i[key]))].sort();
 }
 
+/** Vacío en desarrollo; en producción, el subdominio propio del catálogo. */
+const PREFIJO_ASSETS =
+  process.env.NODE_ENV === "production" ? "https://catalogo.sophiaaurea.co" : "";
+
 export default function CatalogoSophiaAurea({ productos }) {
   const [selected, setSelected] = useState(null);
   const [filters, setFilters] = useState({
@@ -70,8 +74,12 @@ export default function CatalogoSophiaAurea({ productos }) {
     <div className={styles.container}>
       {/* Header */}
       <header className={styles.header}>
+        {/* Ruta absoluta al subdominio propio: este catálogo también se sirve
+            reenviado desde sophiaaurea.co/catalogo, y ahí /lockup... apunta al
+            website de marca, que no tiene ese archivo (404, logo roto).
+            assetPrefix no cubre /public, solo /_next. */}
         <Image
-          src="/lockup-completo-fondo-marfil.png"
+          src={`${PREFIJO_ASSETS}/lockup-completo-fondo-marfil.png`}
           alt="Sophia Auréa — Joyería con Alma"
           width={220}
           height={220}
