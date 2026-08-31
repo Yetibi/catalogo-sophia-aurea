@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
         <Script
           strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=G-4PEDMYDDRS"
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXL1MN816Y"
         />
         <Script
           id="google-analytics"
@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-4PEDMYDDRS');
+              gtag('config', 'G-XXL1MN816Y');
             `,
           }}
         />
